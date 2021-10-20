@@ -3,7 +3,7 @@ package com.example.jetpackcomposepart2
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.animateContentSize
+import androidx.activity.viewModels
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -11,27 +11,27 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.material.Button
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.jetpackcomposepart2.ui.theme.DropDown
+import com.example.jetpackcomposepart2.models.CardModel
 import com.example.jetpackcomposepart2.ui.theme.JetpackComposePart2Theme
+import com.example.jetpackcomposepart2.ui.views.CardsScreen
+import com.example.jetpackcomposepart2.ui.views.DropDown
 
 class MainActivity : ComponentActivity() {
+
+    private val cardsScreenViewModel by viewModels<CardsScreenViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             JetpackComposePart2Theme {
                 // A surface container using the 'background' color from the theme
-                MyApp()
+                CardsScreen(viewModel = cardsScreenViewModel)
+//                MyApp()
             }
         }
     }
@@ -69,12 +69,16 @@ fun OnboardingScreen(onContinueClicked: () -> Unit) {
 }
 
 @Composable
-fun Greetings(names: List<String> = List(1000) { "$it" } ) {
+fun Greetings(
+    names: List<CardModel> = List(1000) {
+        CardModel(it, "$it")
+    }
+) {
     LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
-        items(items = names) { name ->
+        items(items = names) { model ->
             //region ThreeDimensionDropDown
-            DropDown(title = name) {
-                Greeting(name = name)
+            DropDown(title = model.title) {
+                Greeting(name = model.title)
             }
             //endregion
             //region CardContent
@@ -82,12 +86,12 @@ fun Greetings(names: List<String> = List(1000) { "$it" } ) {
 //                backgroundColor = MaterialTheme.colors.primary,
 //                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
 //            ) {
-//                CardContent(name)
+//                CardContent(model.title)
 //            }
             //endregion
 
             //region Greeting
-//            Greeting(name = name)
+//            Greeting(name = model.title)
             //endregion
         }
     }
@@ -125,52 +129,6 @@ fun Greeting(name: String) {
             ) {
                 Text(if (expanded.value) "Show less" else "Show more")
             }
-        }
-    }
-}
-
-@Composable
-private fun CardContent(name: String) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Row(
-        modifier = Modifier
-            .padding(12.dp)
-            .animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            )
-    ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(12.dp)
-        ) {
-            Text(text = "Hello, ")
-            Text(
-                text = name,
-                style = MaterialTheme.typography.h4.copy(
-                    fontWeight = FontWeight.ExtraBold
-                )
-            )
-            if (expanded) {
-                Text(
-                    text = ("Composem ipsum color sit lazy, " +
-                            "padding theme elit, sed do bouncy. ").repeat(4),
-                )
-            }
-        }
-        IconButton(onClick = { expanded = !expanded }) {
-            Icon(
-                imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                contentDescription = if (expanded) {
-                    stringResource(R.string.show_less)
-                } else {
-                    stringResource(R.string.show_more)
-                }
-            )
         }
     }
 }
