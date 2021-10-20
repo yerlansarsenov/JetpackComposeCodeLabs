@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.jetpackcomposepart2.ui.theme.DropDown
 import com.example.jetpackcomposepart2.ui.theme.JetpackComposePart2Theme
 
 class MainActivity : ComponentActivity() {
@@ -62,7 +63,7 @@ fun OnboardingScreen(onContinueClicked: () -> Unit) {
             ) {
                 Text("Continue")
             }
-            
+
         }
     }
 }
@@ -71,13 +72,23 @@ fun OnboardingScreen(onContinueClicked: () -> Unit) {
 fun Greetings(names: List<String> = List(1000) { "$it" } ) {
     LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
         items(items = names) { name ->
-            Card(
-                backgroundColor = MaterialTheme.colors.primary,
-                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
-            ) {
-                CardContent(name)
+            //region ThreeDimensionDropDown
+            DropDown(title = name) {
+                Greeting(name = name)
             }
-            // Greeting(name = name)
+            //endregion
+            //region CardContent
+//            Card(
+//                backgroundColor = MaterialTheme.colors.primary,
+//                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+//            ) {
+//                CardContent(name)
+//            }
+            //endregion
+
+            //region Greeting
+//            Greeting(name = name)
+            //endregion
         }
     }
 }
